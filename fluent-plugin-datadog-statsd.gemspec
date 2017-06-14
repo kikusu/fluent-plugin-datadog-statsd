@@ -1,7 +1,7 @@
 # coding: utf-8
 
 Gem::Specification.new do |spec|
-  spec.name          = 'fluent-plugin-datatdog-statsd'
+  spec.name          = 'fluent-plugin-datadog-statsd'
   spec.version       = '0.0.1'
   spec.authors       = ['Kosuke Miyawaki']
   spec.email         = ['kikusumk3@gmail.com']
