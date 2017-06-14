@@ -2,7 +2,7 @@
 
 Gem::Specification.new do |spec|
   spec.name          = 'fluent-plugin-datadog-statsd'
-  spec.version       = '0.0.1'
+  spec.version       = '0.0.2'
   spec.authors       = ['Kosuke Miyawaki']
   spec.email         = ['kikusumk3@gmail.com']
   spec.summary       = 'Fluentd output plugin for Dogstatsd.'
