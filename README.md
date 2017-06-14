@@ -1,6 +1,8 @@
 # fluentd-plugin-datadog-statsd
 
-Fluend output plugin for Dogstatsd.
+Fluend output plugin for Dogstatsd. 
+
+[![Build Status](https://travis-ci.org/kikusu/fluentd-plugin-datadog-statsd.svg?branch=master)](https://travis-ci.org/kikusu/fluentd-plugin-datadog-statsd)
 
 ## Requirements
 - fluentd >= 0.14
