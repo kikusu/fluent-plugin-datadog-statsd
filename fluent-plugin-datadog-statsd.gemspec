@@ -7,7 +7,7 @@ Gem::Specification.new do |spec|
   spec.email         = ['kikusumk3@gmail.com']
   spec.summary       = 'Fluentd output plugin for Dogstatsd.'
   spec.description   = 'Fluentd output plugin for Dogstatsd.'
-  spec.homepage      = 'https://github.com/kikusu/fluentd-plugin-datadog-statsd'
+  spec.homepage      = 'https://github.com/kikusu/fluent-plugin-datadog-statsd'
   spec.license       = 'MIT'
 
   spec.files         = `git ls-files -z`.split("\x0")
