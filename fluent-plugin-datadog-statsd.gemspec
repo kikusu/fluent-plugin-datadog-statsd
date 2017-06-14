@@ -1,13 +1,13 @@
 # coding: utf-8
 
 Gem::Specification.new do |spec|
-  spec.name          = 'fluent-plugin-datatdog-statsd'
+  spec.name          = 'fluent-plugin-datadog-statsd'
   spec.version       = '0.0.1'
   spec.authors       = ['Kosuke Miyawaki']
   spec.email         = ['kikusumk3@gmail.com']
   spec.summary       = 'Fluentd output plugin for Dogstatsd.'
   spec.description   = 'Fluentd output plugin for Dogstatsd.'
-  spec.homepage      = 'https://github.com/kikusu/fluentd-plugin-datadog-statsd'
+  spec.homepage      = 'https://github.com/kikusu/fluent-plugin-datadog-statsd'
   spec.license       = 'MIT'
 
   spec.files         = `git ls-files -z`.split("\x0")
