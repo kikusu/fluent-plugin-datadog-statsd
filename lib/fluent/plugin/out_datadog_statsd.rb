@@ -119,7 +119,7 @@ module Fluent
       def extract_placeholders_name_opt(metadata)
         metric_name = extract_placeholders(@metric_config.name, metadata)
         options = {}
-        options[:tag] = @tags.map { |tag| extract_placeholders(tag, metadata) } if @tags
+        options[:tags] = @tags.map { |tag| extract_placeholders(tag, metadata) } if @tags
 
         [metric_name, options]
       end
@@ -136,7 +136,7 @@ module Fluent
         event_text = extract_placeholders(@event_config.text, metadata)
 
         options = {}
-        options[:tag] = @tags.map { |tag| extract_placeholders(tag, metadata) } if @tags
+        options[:tags] = @tags.map { |tag| extract_placeholders(tag, metadata) } if @tags
 
         %i[aggregation_key alert_type date_happened priority source_type_name].each do |key|
           options[key] = extract_placeholders(@event_config[key], metadata) if @event_config[key]

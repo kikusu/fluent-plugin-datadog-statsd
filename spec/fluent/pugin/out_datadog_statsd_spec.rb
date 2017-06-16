@@ -34,7 +34,7 @@ tags ["test_tag:test"]
       )
         driver = create_driver(conf)
 
-        expect(driver.instance.statsd).to receive(metric_type).with('test.test', tag: ['test_tag:test'])
+        expect(driver.instance.statsd).to receive(metric_type).with('test.test', tags: ['test_tag:test'])
 
         driver.run(default_tag: 'test') do
           driver.feed(time, {})
@@ -54,7 +54,7 @@ tags ["test_tag:${tag}"]
       )
         driver = create_driver(conf)
 
-        expect(driver.instance.statsd).to receive(metric_type).with('test.test', tag: ['test_tag:test'])
+        expect(driver.instance.statsd).to receive(metric_type).with('test.test', tags: ['test_tag:test'])
 
         driver.run(default_tag: 'test') do
           driver.feed(time, 'metric_name' => 'test.test', 'metric_type' => metric_type.to_s)
@@ -92,7 +92,7 @@ tags ["test_tag:test"]
       )
         driver = create_driver(conf)
 
-        expect(driver.instance.statsd).to receive(metric_type).with('test.test', '1', tag: ['test_tag:test'])
+        expect(driver.instance.statsd).to receive(metric_type).with('test.test', '1', tags: ['test_tag:test'])
 
         driver.run(default_tag: 'test') do
           driver.feed(time, {})
@@ -113,7 +113,7 @@ tags ["test_tag:${tag}"]
       )
         driver = create_driver(conf)
 
-        expect(driver.instance.statsd).to receive(metric_type).with('test.test', '1', tag: ['test_tag:test'])
+        expect(driver.instance.statsd).to receive(metric_type).with('test.test', '1', tags: ['test_tag:test'])
 
         driver.run(default_tag: 'test') do
           driver.feed(time, 'metric_name' => 'test.test', 'metric_type' => metric_type.to_s, 'value' => 1)
@@ -150,7 +150,7 @@ tags ["test_tag:test"]
       )
       driver = create_driver(conf)
 
-      expect(driver.instance.statsd).to receive(:event).with('test_title', 'test_text', tag: ['test_tag:test'])
+      expect(driver.instance.statsd).to receive(:event).with('test_title', 'test_text', tags: ['test_tag:test'])
 
       driver.run(default_tag: 'test') do
         driver.feed(time, {})
@@ -177,7 +177,7 @@ tags ["test_tag:${tag}"]
       driver = create_driver(conf)
 
       expect(driver.instance.statsd).to receive(:event).with(
-        'test_title', 'test_text', tag: ['test_tag:test'], aggregation_key: 'ak', alert_type: 'info', date_happened: time, priority: 'low', source_type_name: 'stn'
+        'test_title', 'test_text', tags: ['test_tag:test'], aggregation_key: 'ak', alert_type: 'info', date_happened: time, priority: 'low', source_type_name: 'stn'
       )
 
       driver.run(default_tag: 'test') do
