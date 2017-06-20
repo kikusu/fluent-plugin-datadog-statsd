@@ -21,10 +21,34 @@ describe Fluent::Plugin::DatadogStatsdOutput do
     Fluent::Test.setup
   end
 
-  %i[increment decrement].each do |metric_type|
-    describe "metric_type=#{metric_type}" do
-      it 'ok' do
+  describe '@add_fluentd_worker_id_to_tags option' do
+    context 'add_fluentd_worker_id_to_tags=true' do
+      it 'add worker id' do
         conf = %(
+@type datadog_statsd
+metric_type increment
+tags ["test_tag:test"]
+add_fluentd_worker_id_to_tags true
+<metric>
+  name test.test
+</metric>
+      )
+        driver = create_driver(conf)
+
+        expect(driver.instance.statsd).to receive(:increment).with('test.test', tags: ['fluentd_worker_id:0', 'test_tag:test'])
+
+        driver.run(default_tag: 'test') do
+          driver.feed(time, {})
+        end
+      end
+    end
+  end
+
+  describe '@metric_type' do
+    %i[increment decrement].each do |metric_type|
+      context "metric_type=#{metric_type}" do
+        it 'ok' do
+          conf = %(
 @type datadog_statsd
 metric_type #{metric_type}
 tags ["test_tag:test"]
@@ -32,17 +56,17 @@ tags ["test_tag:test"]
   name test.test
 </metric>
       )
-        driver = create_driver(conf)
+          driver = create_driver(conf)
 
-        expect(driver.instance.statsd).to receive(metric_type).with('test.test', tags: ['test_tag:test'])
+          expect(driver.instance.statsd).to receive(metric_type).with('test.test', tags: ['test_tag:test'])
 
-        driver.run(default_tag: 'test') do
-          driver.feed(time, {})
+          driver.run(default_tag: 'test') do
+            driver.feed(time, {})
+          end
         end
-      end
 
-      it 'ok with placeholders' do
-        conf = %(
+        it 'ok with placeholders' do
+          conf = %(
 @type datadog_statsd
 metric_type ${metric_type}
 tags ["test_tag:${tag}"]
@@ -52,36 +76,36 @@ tags ["test_tag:${tag}"]
 <buffer ["tag", "metric_type", "metric_name"]>
 </buffer>
       )
-        driver = create_driver(conf)
+          driver = create_driver(conf)
 
-        expect(driver.instance.statsd).to receive(metric_type).with('test.test', tags: ['test_tag:test'])
+          expect(driver.instance.statsd).to receive(metric_type).with('test.test', tags: ['test_tag:test'])
 
-        driver.run(default_tag: 'test') do
-          driver.feed(time, 'metric_name' => 'test.test', 'metric_type' => metric_type.to_s)
+          driver.run(default_tag: 'test') do
+            driver.feed(time, 'metric_name' => 'test.test', 'metric_type' => metric_type.to_s)
+          end
         end
-      end
 
-      it 'not exist metric section' do
-        conf = %(
+        it 'not exist metric section' do
+          conf = %(
 @type datadog_statsd
 metric_type #{metric_type}
 tags ["test_tag:test"]
       )
-        driver = create_driver(conf)
+          driver = create_driver(conf)
 
-        expect(driver.instance.statsd).to_not receive(metric_type)
+          expect(driver.instance.statsd).to_not receive(metric_type)
 
-        driver.run(default_tag: 'test') do
-          driver.feed(time, {})
+          driver.run(default_tag: 'test') do
+            driver.feed(time, {})
+          end
         end
       end
     end
-  end
 
-  %i[count gauge histgram timing set].each do |metric_type|
-    describe "metric_type=#{metric_type}" do
-      it 'ok' do
-        conf = %(
+    %i[count gauge histgram timing set].each do |metric_type|
+      context "metric_type=#{metric_type}" do
+        it 'ok' do
+          conf = %(
 @type datadog_statsd
 metric_type #{metric_type}
 tags ["test_tag:test"]
@@ -90,17 +114,17 @@ tags ["test_tag:test"]
   value 1
 </metric>
       )
-        driver = create_driver(conf)
+          driver = create_driver(conf)
 
-        expect(driver.instance.statsd).to receive(metric_type).with('test.test', '1', tags: ['test_tag:test'])
+          expect(driver.instance.statsd).to receive(metric_type).with('test.test', '1', tags: ['test_tag:test'])
 
-        driver.run(default_tag: 'test') do
-          driver.feed(time, {})
+          driver.run(default_tag: 'test') do
+            driver.feed(time, {})
+          end
         end
-      end
 
-      it 'ok with placeholders' do
-        conf = %(
+        it 'ok with placeholders' do
+          conf = %(
 @type datadog_statsd
 metric_type ${metric_type}
 tags ["test_tag:${tag}"]
@@ -111,35 +135,35 @@ tags ["test_tag:${tag}"]
 <buffer ["tag", "metric_type", "metric_name", "value"]>
 </buffer>
       )
-        driver = create_driver(conf)
+          driver = create_driver(conf)
 
-        expect(driver.instance.statsd).to receive(metric_type).with('test.test', '1', tags: ['test_tag:test'])
+          expect(driver.instance.statsd).to receive(metric_type).with('test.test', '1', tags: ['test_tag:test'])
 
-        driver.run(default_tag: 'test') do
-          driver.feed(time, 'metric_name' => 'test.test', 'metric_type' => metric_type.to_s, 'value' => 1)
+          driver.run(default_tag: 'test') do
+            driver.feed(time, 'metric_name' => 'test.test', 'metric_type' => metric_type.to_s, 'value' => 1)
+          end
         end
-      end
 
-      it 'not exist metric section' do
-        conf = %(
+        it 'not exist metric section' do
+          conf = %(
 @type datadog_statsd
 metric_type #{metric_type}
 tags ["test_tag:test"]
       )
-        driver = create_driver(conf)
+          driver = create_driver(conf)
 
-        expect(driver.instance.statsd).to_not receive(metric_type)
+          expect(driver.instance.statsd).to_not receive(metric_type)
 
-        driver.run(default_tag: 'test') do
-          driver.feed(time, {})
+          driver.run(default_tag: 'test') do
+            driver.feed(time, {})
+          end
         end
       end
     end
-  end
 
-  describe 'metric_type=event' do
-    it 'ok' do
-      conf = %(
+    context 'metric_type=event' do
+      it 'ok' do
+        conf = %(
 @type datadog_statsd
 metric_type event
 tags ["test_tag:test"]
@@ -148,17 +172,17 @@ tags ["test_tag:test"]
   text test_text
 </event>
       )
-      driver = create_driver(conf)
+        driver = create_driver(conf)
 
-      expect(driver.instance.statsd).to receive(:event).with('test_title', 'test_text', tags: ['test_tag:test'])
+        expect(driver.instance.statsd).to receive(:event).with('test_title', 'test_text', tags: ['test_tag:test'])
 
-      driver.run(default_tag: 'test') do
-        driver.feed(time, {})
+        driver.run(default_tag: 'test') do
+          driver.feed(time, {})
+        end
       end
-    end
 
-    it 'ok with placeholders' do
-      conf = %(
+      it 'ok with placeholders' do
+        conf = %(
 @type datadog_statsd
 metric_type event
 tags ["test_tag:${tag}"]
@@ -174,30 +198,31 @@ tags ["test_tag:${tag}"]
 <buffer ["title", "text", "tag", "aggregation_key", "alert_type", "date_happened", "priority", "source_type_name"]>
 </buffer>
       )
-      driver = create_driver(conf)
+        driver = create_driver(conf)
 
-      expect(driver.instance.statsd).to receive(:event).with(
-        'test_title', 'test_text', tags: ['test_tag:test'], aggregation_key: 'ak', alert_type: 'info', date_happened: time, priority: 'low', source_type_name: 'stn'
-      )
+        expect(driver.instance.statsd).to receive(:event).with(
+          'test_title', 'test_text', tags: ['test_tag:test'], aggregation_key: 'ak', alert_type: 'info', date_happened: time, priority: 'low', source_type_name: 'stn'
+        )
 
-      driver.run(default_tag: 'test') do
-        driver.feed(time, 'title' => 'test_title', 'text' => 'test_text', 'aggregation_key' => 'ak',
-                          'alert_type' => 'info', 'date_happened' => time, 'priority' => 'low', 'source_type_name' => 'stn')
+        driver.run(default_tag: 'test') do
+          driver.feed(time, 'title' => 'test_title', 'text' => 'test_text', 'aggregation_key' => 'ak',
+                            'alert_type' => 'info', 'date_happened' => time, 'priority' => 'low', 'source_type_name' => 'stn')
+        end
       end
-    end
 
-    it 'not exist event section' do
-      conf = %(
+      it 'not exist event section' do
+        conf = %(
 @type datadog_statsd
 metric_type event
 tags ["test_tag:test"]
       )
-      driver = create_driver(conf)
+        driver = create_driver(conf)
 
-      expect(driver.instance.statsd).to_not receive(:event)
+        expect(driver.instance.statsd).to_not receive(:event)
 
-      driver.run(default_tag: 'test') do
-        driver.feed(time, {})
+        driver.run(default_tag: 'test') do
+          driver.feed(time, {})
+        end
       end
     end
   end
