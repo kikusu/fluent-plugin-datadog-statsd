@@ -1,6 +1,6 @@
 # fluentd-plugin-datadog-statsd
 
-Fluend output plugin for Dogstatsd. 
+Fluend output plugin for Dogstatsd.
 
 [![Build Status](https://travis-ci.org/kikusu/fluent-plugin-datadog-statsd.svg?branch=master)](https://travis-ci.org/kikusu/fluent-plugin-datadog-statsd)
 [![Gem Version](https://badge.fury.io/rb/fluent-plugin-datadog-statsd.svg)](https://badge.fury.io/rb/fluent-plugin-datadog-statsd)
@@ -23,6 +23,9 @@ Fluend output plugin for Dogstatsd.
 
  # option: tag of datadog.
  tags [ "tag1:tag", "tag2:tag" ]
+
+ # option: add fluentd_worker_id tag to tags
+ add_fluentd_worker_id_to_tags true
 
  # required when metric_type is not event
  <metric>

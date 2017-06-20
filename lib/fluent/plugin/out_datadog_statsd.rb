@@ -10,6 +10,7 @@ module Fluent
 
       config_param :metric_type, :string
       config_param :tags, :array, default: []
+      config_param :add_fluentd_worker_id_to_tags, :bool, default: false
 
       config_section :metric, param_name: :metric_config, required: false,
                               multi: false, final: true do
@@ -114,12 +115,23 @@ module Fluent
         end
       end
 
+      def multi_workers_ready?
+        true
+      end
+
       private
+
+      def tags(metadata)
+        tags = []
+        tags << "fluentd_worker_id:#{fluentd_worker_id}" if @add_fluentd_worker_id_to_tags
+        tags += @tags.map { |tag| extract_placeholders(tag, metadata) } if @tags
+        tags
+      end
 
       def extract_placeholders_name_opt(metadata)
         metric_name = extract_placeholders(@metric_config.name, metadata)
         options = {}
-        options[:tags] = @tags.map { |tag| extract_placeholders(tag, metadata) } if @tags
+        options[:tags] = tags(metadata)
 
         [metric_name, options]
       end
@@ -136,7 +148,7 @@ module Fluent
         event_text = extract_placeholders(@event_config.text, metadata)
 
         options = {}
-        options[:tags] = @tags.map { |tag| extract_placeholders(tag, metadata) } if @tags
+        options[:tags] = tags(metadata)
 
         %i[aggregation_key alert_type date_happened priority source_type_name].each do |key|
           options[key] = extract_placeholders(@event_config[key], metadata) if @event_config[key]
